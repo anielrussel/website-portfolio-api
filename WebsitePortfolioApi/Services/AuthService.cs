@@ -16,7 +16,7 @@ namespace WebsitePortfolioApi.Services
     {
         protected readonly WebsitePortfolioDbContext _context = context;
 
-        public async Task<LoginResponseDto?> LoginAsync(LoginRequest request)
+        public async Task<LoginResponseDto?> LoginAsync(LoginRequestDto request)
         {
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username);
@@ -34,7 +34,7 @@ namespace WebsitePortfolioApi.Services
             return await CreateTokenResponse(user);
         }
 
-        public async Task<User?> RegisterAsync(LoginRequest request)
+        public async Task<User?> RegisterAsync(LoginRequestDto request)
         {
             // Find if the user with the username already exists
             if (await _context.Users.AnyAsync(u => u.Username == request.Username))

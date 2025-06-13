@@ -12,7 +12,7 @@ namespace WebsitePortfolioApi.Controllers
         protected readonly IAuthService _authService = authService;
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(LoginRequest request)
+        public async Task<ActionResult<User>> Register(LoginRequestDto request)
         {
             var user = await _authService.RegisterAsync(request);
 
@@ -25,7 +25,7 @@ namespace WebsitePortfolioApi.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponseDto>> Login(LoginRequest request)
+        public async Task<ActionResult<LoginResponseDto>> Login(LoginRequestDto request)
         {
             var result = await _authService.LoginAsync(request);
 
