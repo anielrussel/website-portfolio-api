@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebsitePortfolioApi.Data;
 
@@ -11,9 +12,11 @@ using WebsitePortfolioApi.Data;
 namespace WebsitePortfolioApi.Migrations
 {
     [DbContext(typeof(WebsitePortfolioDbContext))]
-    partial class WebsitePortfolioDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250613093155_AddProfile")]
+    partial class AddProfile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

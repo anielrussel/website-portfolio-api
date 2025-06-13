@@ -5,8 +5,8 @@ namespace WebsitePortfolioApi.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<User?> RegisterAsync(LoginRequest request);
-        Task<LoginResponseDto?> LoginAsync(LoginRequest request);
+        Task<User?> RegisterAsync(LoginRequestDto request);
+        Task<LoginResponseDto?> LoginAsync(LoginRequestDto request);
         Task<LoginResponseDto?> RefreshTokensAsync(RefreshTokenRequestDto request);
     }
 }
