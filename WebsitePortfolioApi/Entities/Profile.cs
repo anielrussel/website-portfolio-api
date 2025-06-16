@@ -9,6 +9,10 @@
         public string Position { get; set; } = string.Empty;
         public string? Image { get; set; }
         public string? Address { get; set; }
-        public int? UserId { get; set; } 
+        public int? UserId { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string ContactNo { get; set; } = string.Empty;
+        public List<SocialLink>? SocialLinks { get; set; }
+        public List<Skill>? Skills { get; set; }
     }
 }

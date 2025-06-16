@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebsitePortfolioApi.Data;
 
@@ -11,9 +12,11 @@ using WebsitePortfolioApi.Data;
 namespace WebsitePortfolioApi.Migrations
 {
     [DbContext(typeof(WebsitePortfolioDbContext))]
-    partial class WebsitePortfolioDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250616125112_AddSocialLink")]
+    partial class AddSocialLink
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,41 +62,15 @@ namespace WebsitePortfolioApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("SocialLinkId")
+                        .HasColumnType("int");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.ToTable("Profiles");
-                });
-
-            modelBuilder.Entity("WebsitePortfolioApi.Entities.Skill", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Icon")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
-
-                    b.ToTable("Skills");
                 });
 
             modelBuilder.Entity("WebsitePortfolioApi.Entities.SocialLink", b =>
@@ -111,7 +88,7 @@ namespace WebsitePortfolioApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProfileId")
+                    b.Property<int?>("ProfileId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -155,32 +132,15 @@ namespace WebsitePortfolioApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebsitePortfolioApi.Entities.Skill", b =>
-                {
-                    b.HasOne("WebsitePortfolioApi.Entities.Profile", "Profile")
-                        .WithMany("Skills")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Profile");
-                });
-
             modelBuilder.Entity("WebsitePortfolioApi.Entities.SocialLink", b =>
                 {
-                    b.HasOne("WebsitePortfolioApi.Entities.Profile", "Profile")
+                    b.HasOne("WebsitePortfolioApi.Entities.Profile", null)
                         .WithMany("SocialLinks")
-                        .HasForeignKey("ProfileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Profile");
+                        .HasForeignKey("ProfileId");
                 });
 
             modelBuilder.Entity("WebsitePortfolioApi.Entities.Profile", b =>
                 {
-                    b.Navigation("Skills");
-
                     b.Navigation("SocialLinks");
                 });
 #pragma warning restore 612, 618

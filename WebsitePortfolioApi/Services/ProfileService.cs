@@ -25,7 +25,9 @@ namespace WebsitePortfolioApi.Services
                 Position = request.Position,
                 Image = request.Image,
                 Address = request.Address,
-                UserId = request.UserId
+                UserId = request.UserId,
+                Email = request.Email,
+                ContactNo = request.ContactNo,
             };
 
             _context.Profiles.Add(profile);
@@ -34,9 +36,12 @@ namespace WebsitePortfolioApi.Services
 
             return profile;
         }
-        public async Task<List<Profile?>> GetProfilesAsync()
+        public async Task<List<Profile>?> GetProfilesAsync()
         {
-            var profiles = await _context.Profiles.ToListAsync();
+            var profiles = await _context.Profiles
+                .Include(p => p.SocialLinks)
+                .Include(p => p.Skills)
+                .ToListAsync();
 
         
             return profiles.Count > 0 ? profiles : [];
@@ -67,6 +72,8 @@ namespace WebsitePortfolioApi.Services
             profile.Image = request.Image;
             profile.Address = request.Address;
             profile.UserId = request.UserId;
+            profile.Email = request.Email;
+            profile.ContactNo = request.ContactNo;
 
             _context.Profiles.Update(profile);
             await _context.SaveChangesAsync();
