@@ -6,9 +6,9 @@ using WebsitePortfolioApi.Services.Interfaces;
 
 namespace WebsitePortfolioApi.Controllers
 {
-    [Route("api/profile")]
+    [Route("api/profiles")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProfileController(IProfileService profileService) : ControllerBase
     {
         protected readonly IProfileService _profileService = profileService;

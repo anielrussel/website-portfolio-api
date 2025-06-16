@@ -44,7 +44,8 @@ builder.Services
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-
+builder.Services.AddScoped<ISocialLinkService, SocialLinkService>();
+builder.Services.AddScoped<ISkillService, SkillService>();
 
 var app = builder.Build();
 
