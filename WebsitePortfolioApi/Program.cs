@@ -17,7 +17,7 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi(options => { options.AddDocumentTransformer<BearerSecuritySchemeTransformer>(); });
 
 builder.Services.AddDbContext<WebsitePortfolioDbContext>(options => options
-    .UseSqlServer(builder.Configuration
+    .UseNpgsql(builder.Configuration
     .GetConnectionString("DefaultConnection")));
 
 // For authentication and authorization
