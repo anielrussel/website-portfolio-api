@@ -17,7 +17,6 @@ namespace WebsitePortfolioApi.Services
                 Name = request.Name,
                 Icon = request.Icon,
                 Category = request.Category,
-                ProfileId = request.ProfileId
             };
 
             _context.Skills.Add(skill);
@@ -55,7 +54,6 @@ namespace WebsitePortfolioApi.Services
             existingSkill.Name = request.Name;
             existingSkill.Icon = request.Icon;
             existingSkill.Category = request.Category;
-            existingSkill.ProfileId = request.ProfileId;
 
             _context.Skills.Update(existingSkill);
             await _context.SaveChangesAsync();

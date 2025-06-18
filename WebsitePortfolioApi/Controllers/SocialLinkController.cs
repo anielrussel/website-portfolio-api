@@ -15,7 +15,7 @@ namespace WebsitePortfolioApi.Controllers
         protected readonly ISocialLinkService _socialLinkService = socialLinkService;
 
         [HttpPost]
-        public async Task<ActionResult<SocialLink>> AddSocialLink(SocialLinkRequestDto request)
+        public async Task<ActionResult<SocialLink>> CreateSocialLink(SocialLinkRequestDto request)
         {
             var result = await _socialLinkService.CreateSocialLinkAsync(request);
 
@@ -28,7 +28,7 @@ namespace WebsitePortfolioApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<SocialLink>> GetSocialLinks()
+        public async Task<ActionResult<List<SocialLink>>> GetSocialLinks()
         {
             var result = await _socialLinkService.GetSocialLinksAsync();
 

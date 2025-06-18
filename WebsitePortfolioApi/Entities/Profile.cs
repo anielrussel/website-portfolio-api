@@ -12,7 +12,8 @@
         public int? UserId { get; set; }
         public string Email { get; set; } = string.Empty;
         public string ContactNo { get; set; } = string.Empty;
-        public List<SocialLink>? SocialLinks { get; set; }
-        public List<Skill>? Skills { get; set; }
+        public List<SocialLink> SocialLinks { get; set; } = new List<SocialLink>();
+        public List<ProfileSkill> Skills { get; set; } = new();
+        public List<Project> Projects { get; set; } = new List<Project>();
     }
 }

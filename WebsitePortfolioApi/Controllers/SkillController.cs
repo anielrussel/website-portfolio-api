@@ -24,7 +24,7 @@ namespace WebsitePortfolioApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Skill>> GetSkills()
+        public async Task<ActionResult<List<Skill>>> GetSkills()
         {
             var result = await _skillService.GetSkillsAsync();
 
