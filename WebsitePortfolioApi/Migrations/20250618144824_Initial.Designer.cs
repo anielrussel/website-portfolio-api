@@ -12,7 +12,7 @@ using WebsitePortfolioApi.Data;
 namespace WebsitePortfolioApi.Migrations
 {
     [DbContext(typeof(WebsitePortfolioDbContext))]
-    [Migration("20250617130809_Initial")]
+    [Migration("20250618144824_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -70,6 +70,75 @@ namespace WebsitePortfolioApi.Migrations
                     b.ToTable("Profiles");
                 });
 
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.ProfileSkill", b =>
+                {
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProfileId", "SkillId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("ProfileSkills");
+                });
+
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.Project", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProfileId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RepoLink")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProfileId");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.ProjectSkill", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SkillId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ProfileId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ProjectId", "SkillId");
+
+                    b.HasIndex("ProfileId");
+
+                    b.HasIndex("SkillId");
+
+                    b.ToTable("ProjectSkills");
+                });
+
             modelBuilder.Entity("WebsitePortfolioApi.Entities.Skill", b =>
                 {
                     b.Property<int>("Id")
@@ -89,12 +158,7 @@ namespace WebsitePortfolioApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ProfileId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ProfileId");
 
                     b.ToTable("Skills");
                 });
@@ -158,15 +222,57 @@ namespace WebsitePortfolioApi.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("WebsitePortfolioApi.Entities.Skill", b =>
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.ProfileSkill", b =>
                 {
                     b.HasOne("WebsitePortfolioApi.Entities.Profile", "Profile")
-                        .WithMany("Skills")
+                        .WithMany("ProfileSkills")
+                        .HasForeignKey("ProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsitePortfolioApi.Entities.Skill", "Skill")
+                        .WithMany("ProfileSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Profile");
+
+                    b.Navigation("Skill");
+                });
+
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.Project", b =>
+                {
+                    b.HasOne("WebsitePortfolioApi.Entities.Profile", "Profile")
+                        .WithMany()
                         .HasForeignKey("ProfileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Profile");
+                });
+
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.ProjectSkill", b =>
+                {
+                    b.HasOne("WebsitePortfolioApi.Entities.Profile", null)
+                        .WithMany("Projects")
+                        .HasForeignKey("ProfileId");
+
+                    b.HasOne("WebsitePortfolioApi.Entities.Project", "Project")
+                        .WithMany("ProjectSkills")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebsitePortfolioApi.Entities.Skill", "Skill")
+                        .WithMany("ProjectSkills")
+                        .HasForeignKey("SkillId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Skill");
                 });
 
             modelBuilder.Entity("WebsitePortfolioApi.Entities.SocialLink", b =>
@@ -182,9 +288,23 @@ namespace WebsitePortfolioApi.Migrations
 
             modelBuilder.Entity("WebsitePortfolioApi.Entities.Profile", b =>
                 {
-                    b.Navigation("Skills");
+                    b.Navigation("ProfileSkills");
+
+                    b.Navigation("Projects");
 
                     b.Navigation("SocialLinks");
+                });
+
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.Project", b =>
+                {
+                    b.Navigation("ProjectSkills");
+                });
+
+            modelBuilder.Entity("WebsitePortfolioApi.Entities.Skill", b =>
+                {
+                    b.Navigation("ProfileSkills");
+
+                    b.Navigation("ProjectSkills");
                 });
 #pragma warning restore 612, 618
         }

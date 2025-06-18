@@ -34,13 +34,14 @@ namespace WebsitePortfolioApi.Services
             await _context.SaveChangesAsync();
 
 
-            return profile;
+            return await Task.FromResult(profile);
         }
         public async Task<List<Profile>?> GetProfilesAsync()
         {
             var profiles = await _context.Profiles
                 .Include(p => p.SocialLinks)
                 .Include(p => p.Skills)
+                .Include(p => p.Projects)
                 .ToListAsync();
 
         
