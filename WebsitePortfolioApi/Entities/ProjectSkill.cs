@@ -5,7 +5,6 @@ namespace WebsitePortfolioApi.Entities
     public class ProjectSkill
     {
         public int SkillId { get; set; }
-        [JsonIgnore]
         public int ProjectId { get; set; }
        
 

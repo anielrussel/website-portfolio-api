@@ -1,4 +1,6 @@
-﻿namespace WebsitePortfolioApi.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace WebsitePortfolioApi.Entities
 {
     public class Project
     {
@@ -9,6 +11,8 @@
         public string? Url { get; set; }
         public string? RepoLink { get; set; }
         public int ProfileId { get; set; }
+
+        [JsonIgnore]
         public Profile? Profile { get; set; }
         public List<ProjectSkill> ProjectSkills { get; set; } = new();
     }

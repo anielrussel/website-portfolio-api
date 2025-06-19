@@ -11,19 +11,6 @@ namespace WebsitePortfolioApi.Controllers
     {
         protected readonly IProjectSkillService _projectSkillService = projectSkillService;
 
-        [HttpPost]
-        public async Task<ActionResult<List<ProjectSkill>>> CreateAndDeleteProjectSkill([FromBody] ProjectSkillRequestDto request)
-        {
-            if (request == null || request.ProjectId <= 0)
-            {
-                return BadRequest();
-            }
-
-            var result = await _projectSkillService.CreateAndDeleteProjectSkillAsync(request);
-
-            return Ok(result);
-        }
-
         [HttpGet]
         public async Task<ActionResult<List<ProjectSkill>>> GetProjectSkills()
         {

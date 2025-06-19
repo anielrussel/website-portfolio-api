@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebsitePortfolioApi.Data;
 using WebsitePortfolioApi.Entities;
 using WebsitePortfolioApi.Models.DTOs;
@@ -10,12 +11,12 @@ namespace WebsitePortfolioApi.Services
     {
         protected readonly WebsitePortfolioDbContext _context = context;
 
-        public async Task<Profile?> CreateProfileAsync(ProfileRequestDto request)
+        public async Task<ApiResponse<Profile>> CreateProfileAsync(ProfileRequestDto request)
         {
             var existingProfile = await _context.Profiles.FindAsync(request.UserId);
             if (existingProfile is not null)
             {
-                return null;
+                return ApiResponse<Profile>.Conflict("Profile already exists.");
             }
             var profile = new Profile
             {
@@ -33,37 +34,42 @@ namespace WebsitePortfolioApi.Services
             _context.Profiles.Add(profile);
             await _context.SaveChangesAsync();
 
-
-            return await Task.FromResult(profile);
+            return ApiResponse<Profile>.Created(profile);
         }
-        public async Task<List<Profile>?> GetProfilesAsync()
+        public async Task<ApiResponse<List<Profile>>> GetProfilesAsync()
         {
             var profiles = await _context.Profiles
                 .Include(p => p.SocialLinks)
                 .Include(p => p.Skills)
                 .Include(p => p.Projects)
+                .AsSplitQuery()
                 .ToListAsync();
 
-        
-            return profiles.Count > 0 ? profiles : [];
+            if (profiles is null || !profiles.Any())
+            {
+                return ApiResponse<List<Profile>>.NotFound("No profiles found.");
+            }
+
+
+            return ApiResponse<List<Profile>>.SuccessResponse(profiles);
         }
-        public async Task<Profile?> GetProfileByIdAsync(int id)
+        public async Task<ApiResponse<Profile>> GetProfileByIdAsync(int id)
         {
             var profile = await _context.Profiles.FindAsync(id);
 
             if (profile is null)
             {
-                return null;
+                return ApiResponse<Profile>.NotFound("Profile not found.");
             }
 
-            return profile;
+            return ApiResponse<Profile>.SuccessResponse(profile);
         }
-        public async Task<Profile?> UpdateProfileAsync(int id, ProfileRequestDto request)
+        public async Task<ApiResponse<Profile>> UpdateProfileAsync(int id, ProfileRequestDto request)
         {
             var profile = await _context.Profiles.FindAsync(id);
             if ( profile is null)
             {
-                return null;
+                return ApiResponse<Profile>.NotFound("Profile not found.");
             }
 
             profile.FirstName = request.FirstName;
@@ -79,21 +85,54 @@ namespace WebsitePortfolioApi.Services
             _context.Profiles.Update(profile);
             await _context.SaveChangesAsync();
 
-            return profile;
+            return ApiResponse<Profile>.SuccessResponse(profile, "Profile updated successfully");
         }
-        public async Task<Profile?> DeleteProfileAsync(int id)
+        public async Task<ApiResponse<Profile>> DeleteProfileAsync(int id)
         {
             var profile = await _context.Profiles.FindAsync(id);
 
             if (profile is null)
             {
-                return null;
+                return ApiResponse<Profile>.NotFound("Profile not found.");
             }
 
             _context.Profiles.Remove(profile);
             await _context.SaveChangesAsync();
 
-            return profile;
+            return ApiResponse<Profile>.SuccessResponse(profile, "Profile deleted successfully.");
+        }
+
+        public async Task<ApiResponse<ProfileSkillRequestDto>> AddDeleteSkillsAsync(ProfileSkillRequestDto request)
+        {
+            if (request.AddedSkillIds.Any())
+            {
+                var existingProfile = await _context.ProfileSkills
+                    .Where(p => p.ProfileId == request.ProfileId && request.AddedSkillIds.Contains(p.SkillId))
+                    .Select(p => p.SkillId)
+                    .ToListAsync();
+
+                var newSkills = request.AddedSkillIds
+                    .Except(existingProfile)
+                    .Select(skillId => new ProfileSkill
+                    {
+                        ProfileId = request.ProfileId,
+                        SkillId = skillId
+                    });
+
+                _context.ProfileSkills.AddRange(newSkills);
+            }
+
+            if (request.DeletedSkillIds.Any())
+            {
+                var existingSkills = await _context.ProfileSkills
+                    .Where(p => p.ProfileId == request.ProfileId && request.DeletedSkillIds.Contains(p.SkillId))
+                    .ToListAsync();
+                _context.ProfileSkills.RemoveRange(existingSkills);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return ApiResponse<ProfileSkillRequestDto>.SuccessResponse(request);
         }
     }
 }
