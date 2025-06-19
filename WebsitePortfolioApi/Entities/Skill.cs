@@ -1,4 +1,6 @@
-﻿namespace WebsitePortfolioApi.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace WebsitePortfolioApi.Entities
 {
     public class Skill
     {
@@ -7,7 +9,9 @@
         public string? Icon { get; set; }
         public string Category { get; set; } = string.Empty;
 
+        [JsonIgnore]
         public List<ProfileSkill> ProfileSkills { get; set; } = new();
+        [JsonIgnore]
         public List<ProjectSkill> ProjectSkills { get; set; } = new();
     }
 }

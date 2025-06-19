@@ -13,66 +13,51 @@ namespace WebsitePortfolioApi.Controllers
         protected readonly IProjectService _projectService = projectService;
 
         [HttpPost]
-        public async Task<ActionResult<Project>> CreateProject(ProjectRequestDto request)
+        public async Task<IActionResult> CreateProject(ProjectRequestDto request)
         {
             var result = await _projectService.CreateProjectAsync(request);
-            if (result is null)
-            {
-                return BadRequest();
-            }
-            return CreatedAtAction(nameof(GetProjectById), new { id = result.Id }, result);
+           
+            return result.ToActionResult();
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Project>>> GetProjects()
+        public async Task<IActionResult> GetProjects()
         {
             var result = await _projectService.GetProjectsAsync();
 
-            return Ok(result);
+            return result.ToActionResult();
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Project>> GetProjectById(int id)
+        public async Task<IActionResult> GetProjectById(int id)
         {
             var result = await _projectService.GetProjectByIdAsync(id);
-            if (result is null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
+           
+            return result.ToActionResult();
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Project>> UpdateProject(int id, ProjectRequestDto request)
+        public async Task<IActionResult> UpdateProject(int id, ProjectRequestDto request)
         {
             var result = await _projectService.UpdateProjectAsync(id, request);
-            if (result is null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
+          
+            return result.ToActionResult();
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Project>> DeleteProject(int id)
+        public async Task<IActionResult> DeleteProject(int id)
         {
             var result = await _projectService.DeleteProjectAsync(id);
-            if (result is null)
-            {
-                return NotFound();
-            }
-            return Ok(result);
+           
+            return result.ToActionResult();
         }
 
         [HttpPost("skills")]
         public async Task<IActionResult> AddDeleteSkills(ProjectSkillRequestDto request)
         {
             var result = await _projectService.AddDeleteSkillsAsync(request);
-            if (result is null)
-            {
-                return BadRequest();
-            }
-            return Ok(result);
+           
+            return result.ToActionResult();
         }
     }
 }

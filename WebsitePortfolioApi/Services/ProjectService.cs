@@ -11,7 +11,7 @@ namespace WebsitePortfolioApi.Services
     {
         protected readonly WebsitePortfolioDbContext _context = context;
 
-        public async Task<Project?> CreateProjectAsync(ProjectRequestDto request)
+        public async Task<ApiResponse<Project>> CreateProjectAsync(ProjectRequestDto request)
         {
            var project = new Project
            {
@@ -26,35 +26,38 @@ namespace WebsitePortfolioApi.Services
             _context.Projects.Add(project);
             await  _context.SaveChangesAsync();
 
-            return await Task.FromResult(project);
+            return ApiResponse<Project>.Created(project);
         }
 
-        public async Task<Project?> GetProjectByIdAsync(int id)
+        public async Task<ApiResponse<Project>> GetProjectByIdAsync(int id)
         {
             var existingProject = await _context.Projects.FindAsync(id);
             if (existingProject == null)
             {
-                return null;
+                return ApiResponse<Project>.NotFound("Project not found.");
             }
 
-            return await Task.FromResult(existingProject);
+            return ApiResponse<Project>.SuccessResponse(existingProject);
         }
 
-        public async Task<List<Project>?> GetProjectsAsync()
+        public async Task<ApiResponse<List<Project>>> GetProjectsAsync()
         {
             var projects = await _context.Projects
                 .Include(p => p.ProjectSkills)
                 .ToListAsync();
-            
-            return await Task.FromResult(projects.Count > 0 ? projects : []);
+            if (projects is null || !projects.Any())
+            {
+                return ApiResponse<List<Project>>.NotFound("No projects found.");
+            }
+            return ApiResponse<List<Project>>.SuccessResponse(projects);
         }
 
-        public async Task<Project?> UpdateProjectAsync(int id, ProjectRequestDto request)
+        public async Task<ApiResponse<Project>> UpdateProjectAsync(int id, ProjectRequestDto request)
         {
             var existingProject = await _context.Projects.FindAsync(id);
             if (existingProject == null)
             {
-                return null;
+                return ApiResponse<Project>.NotFound("Project not found.");
             }
 
             existingProject.Name = request.Name;
@@ -67,24 +70,32 @@ namespace WebsitePortfolioApi.Services
             _context.Projects.Update(existingProject);
             await _context.SaveChangesAsync();
 
-            return await Task.FromResult(existingProject);
+            return ApiResponse<Project>.SuccessResponse(existingProject, "Project updated successfully");
         }
-        public async Task<Project?> DeleteProjectAsync(int id)
+        public async Task<ApiResponse<Project>> DeleteProjectAsync(int id)
         {
             var existingProject = await _context.Projects.FindAsync(id);
             if (existingProject == null)
             {
-                return null;
+                return ApiResponse<Project>.NotFound("Project not found.");
             }
 
             _context.Projects.Remove(existingProject);
             await _context.SaveChangesAsync();
 
-            return await Task.FromResult(existingProject);
+            return ApiResponse<Project>.SuccessResponse(existingProject, "Project deleted successfully");
         }
 
-        public async Task<IActionResult> AddDeleteSkillsAsync(ProjectSkillRequestDto request)
+        public async Task<ApiResponse<ProjectSkillRequestDto>> AddDeleteSkillsAsync(ProjectSkillRequestDto request)
         {
+            var existingProject = await _context.Projects.FindAsync(request.ProjectId);
+
+            if (existingProject == null)
+            {
+                return ApiResponse<ProjectSkillRequestDto>.NotFound("Project not found.");
+            }
+
+
             if (request.AddedSkillIds.Any())
             {
                 var existingSkills = await _context.ProjectSkills
@@ -98,6 +109,8 @@ namespace WebsitePortfolioApi.Services
                         ProjectId = request.ProjectId,
                         SkillId = skillId
                     }).ToList();
+
+             
                 _context.ProjectSkills.AddRange(newSkills);
             }
 
@@ -112,7 +125,7 @@ namespace WebsitePortfolioApi.Services
 
             await _context.SaveChangesAsync();
 
-            return new OkObjectResult(request);
+            return ApiResponse<ProjectSkillRequestDto>.SuccessResponse(request);
         }
     }
 }
